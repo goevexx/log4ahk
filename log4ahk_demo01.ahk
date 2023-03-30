@@ -1,22 +1,21 @@
 #Warn All
 #Warn LocalSameAsGlobal, Off
 
-#include %A_ScriptDir%\log4ahk.ahk
-
-; #include %A_ScriptDir%\lib\SerDes.ahk
-
-WinActivate "DebugView++"
-OutputDebug "DBGVIEWCLEAR"
+#include log4ahk.ahk
 
 
-logger := new log4ahk()
-; Set the loglevel to be filtered upon
-logger.loglevel.required := logger.loglevel.TRACE
-; Set the appenders to be logged to
-logger.appenders.push(new logger.appenderoutputdebug())
-logger.appenders.push(new logger.appenderstdout())
+if (WinExist("DebugView++")){
+	WinActivate "DebugView++"
+	OutputDebug "DBGVIEWCLEAR"
+}
+
+; Set the loglevel to be filtered upon and
 ; Show loglevel, current function, computername and log message in log protocol
-logger.layout.required := "{%H} [%-5.5V] {%15.15M} %i %m"
+logger := Log4ahk("{%H} [%-5.5V] {%15.15M} %i %m", LogLevel.TRACE)
+; Set the appenders to be logged to
+logger.appenders.push(Log4ahk.AppenderOutputDebug())
+logger.appenders.push(Log4ahk.AppenderStdOut())
+logger.appenders.push(Log4ahk.AppenderFile("test.log"))
 logger.info("Running log4ahk - Version " logger._version)
 logger.trace("Test TRACE - Lvl TRACE") 
 logger.debug("Test DEBUG - Lvl TRACE")
@@ -28,9 +27,8 @@ return
 
 ;########################################################
 f1() {
-	logger := new log4ahk()
 	; Change the loglevel to be filtered upon
-	logger.loglevel.required := logger.loglevel.INFO
+	logger := Log4ahk("",LogLevel.INFO)
 	logger.info("Entering function")
 	logger.debug("Test DEBUG - Lvl INFO") ; won't be logged as the current loglevel has lesser priority than required loglevel
 	logger.info("Test INFO - Lvl INFO")
@@ -40,15 +38,15 @@ f1() {
 }
 
 f11() {
-	logger := new log4ahk()
+	logger := Log4ahk()
 	; Change the loglevel to be filtered upon
 	logger.info("INFO - Test INFO - Lvl INFO")
 }
 
 ;########################################################
 f2() {
-	logger := new log4ahk()
-	logger.layout.required := "%d - %r - %R [%P] [%-5.5V] {%s - %-15.15M}{%H} %m"
+	logger := Log4ahk()
+	logger.logLayout.layout := "%d - %r - %R [%P] [%-5.5V] {%s - %-15.15M}{%H} %m"
 	logger.info("INFO - Test INFO - Lvl INFO - after change of layout")
 }
 /*

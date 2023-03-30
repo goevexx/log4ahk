@@ -36,12 +36,12 @@ Parameter:
 */
 
 CallStack(deepness :=100, getContents := true) {
-	stack := {}
+	stack := Map()
 	max := 0
 	loop deepness {
 		lvl := -1 - deepness + A_Index
-		oEx := Exception("", lvl)
-		oExPrev := Exception("", lvl - 1)
+		oEx := Error("", lvl)
+		oExPrev := Error("", lvl - 1)
 			
 		if (getContents) { ; Get the corresponding line from the file
 			file := FileOpen(oEx.file, "r")
